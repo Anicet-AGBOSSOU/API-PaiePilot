@@ -54,6 +54,6 @@ EmployeeSchema.pre('save', function(next) {
 });
 
 // Option pour créer un index unique pour `email` et améliorer les performances de recherche
-EmployeeSchema.index({ email: 1 }, { unique: true });
+// EmployeeSchema.index({ email: 1 }, { unique: true });
 
 module.exports = mongoose.model('Employee', EmployeeSchema);
