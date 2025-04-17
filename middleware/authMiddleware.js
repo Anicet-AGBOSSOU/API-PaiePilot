@@ -20,7 +20,7 @@
 
 // const jwt = require("jsonwebtoken");
 // require(`dotenv`).config();
-// const jwt = require('../config/jwt');
+// // const jwt = require('../config/jwt');
 
 // //Middleware pour vérifier un token JWT
 // const authenticateToken= (req, res, next) => {
@@ -28,7 +28,7 @@
 //   if (!token) return res.status(401).json({ msg: "Accès refusé. Token manquant" });
 
 //   try {
-//     const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
+//     const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET || 'MON_CODE_SECRET') ;
 //     req.user = decoded;
 //     next();
 //   } catch (err) {
@@ -39,23 +39,36 @@
 // module.exports = authenticateToken;
 
 
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
 
-// Middleware pour vérifier un token JWT
+
+const jwt = require('jsonwebtoken');
+require(`dotenv`).config();
+
+// Middleware pour vérifier l'authentification
 const authenticateToken = (req, res, next) => {
-  const token = req.headers["authorization"]; // Utilisation de headers au lieu de header
-  if (!token) return res.status(401).json({ msg: "Accès refusé. Token manquant" });
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+
+  if (!token) {
+    return res.status(401).json({ error: 'Authentification requise. Token manquant.' });
+  }
 
   try {
-    const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // Ajoute les informations de l'utilisateur au request object
+    req.companyId=decoded.companyId
     next();
-  } catch (err) {
-    res.status(401).json({ msg: "Token invalide" });
+  
+  } catch (error) {
+    res.status(401).json({ error: 'Token invalide.' });
   }
 };
-
 module.exports = authenticateToken;
-
-
+// // Middleware pour vérifier les rôles
+// exports.authorizeRole = (roles) => {
+//   return (req, res, next) => {
+//     if (!roles.includes(req.user.role)) {
+//       return res.status(403).json({ error: 'Accès refusé. Rôle non autorisé.' });
+//     }
+//     next();
+//   };
+// };

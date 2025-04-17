@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
+require(`dotenv`).config();
+const authenticateToken = require('../middleware/authMiddleware');
+
 
 // Routes d'authentification
 router.post('/register', authController.registerCompany);

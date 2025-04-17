@@ -1,7 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Company = require('../models/companyModel');
-const { JWT_SECRET } = require('../config/jwt');
+const JWT_SECRET=process.env.JWT_SECRET;
+console.log(JWT_SECRET)
+// const { JWT_SECRET } = require('../config/jwt');
+require(`dotenv`).config();
 
 const generateToken = (payload) => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
@@ -66,6 +69,7 @@ exports.registerCompany = async (req, res) => {
 };
 
 // Connexion d'une entreprise
+
 exports.loginCompany = async (req, res) => {
   const { companyEmail, password } = req.body;
 
@@ -76,21 +80,34 @@ exports.loginCompany = async (req, res) => {
   try {
     const company = await Company.findOne({ companyEmail });
 
+    // Étape 1 : Vérifie si l'entreprise existe
     if (!company) {
+      console.log('Aucune entreprise trouvée avec cet email :', companyEmail);
       return res.status(401).json({ error: 'Identifiants invalides.' });
     }
 
+    // Étape 2 : Affiche le mot de passe haché stocké
+    console.log('Mot de passe haché trouvé en base de données :', company.passwordHash);
+
+    // Étape 3 : Affiche le mot de passe fourni par l'utilisateur
+    console.log('Mot de passe fourni :', password);
+
     const passwordMatch = await bcrypt.compare(password, company.passwordHash);
+
+    // Étape 4 : Vérifie si les mots de passe correspondent
+    console.log('Les mots de passe correspondent ?', passwordMatch);
+
     if (passwordMatch) {
       const payload = { companyId: company._id, companyEmail: company.companyEmail };
       const token = generateToken(payload);
 
-
-      // Ajouter l'entreprise à la liste des connectées
       connectedCompanies.push({ companyId: company._id, companyEmail: company.companyEmail });
+
+      console.log('Connexion réussie. Token généré :', token);
 
       res.status(200).json({ token, companyId: company._id });
     } else {
+      console.log('Mot de passe incorrect.');
       res.status(401).json({ error: 'Identifiants invalides.' });
     }
   } catch (error) {
@@ -98,6 +115,40 @@ exports.loginCompany = async (req, res) => {
     res.status(500).json({ error: 'Erreur serveur lors de la connexion.' });
   }
 };
+
+
+// exports.loginCompany = async (req, res) => {
+//   const { companyEmail, password } = req.body;
+
+//   if (!companyEmail || !password) {
+//     return res.status(400).json({ error: 'L\'email et le mot de passe sont requis.' });
+//   }
+
+//   try {
+//     const company = await Company.findOne({ companyEmail });
+
+//     if (!company) {
+//       return res.status(401).json({ error: 'Identifiants invalides.' });
+//     }
+
+//     const passwordMatch = await bcrypt.compare(password, company.passwordHash);
+//     if (passwordMatch) {
+//       const payload = { companyId: company._id, companyEmail: company.companyEmail };
+//       const token = generateToken(payload);
+
+
+//       // Ajouter l'entreprise à la liste des connectées
+//       connectedCompanies.push({ companyId: company._id, companyEmail: company.companyEmail });
+
+//       res.status(200).json({ token, companyId: company._id });
+//     } else {
+//       res.status(401).json({ error: 'Identifiants invalides.' });
+//     }
+//   } catch (error) {
+//     console.error('Erreur lors de la connexion :', error);
+//     res.status(500).json({ error: 'Erreur serveur lors de la connexion.' });
+//   }
+// };
 
 // Déconnexion d'une entreprise
 exports.logoutCompany = (req, res) => {

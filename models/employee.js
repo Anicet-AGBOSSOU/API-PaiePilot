@@ -14,7 +14,6 @@
 
 
 const mongoose = require('mongoose');
-
 const EmployeeSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
@@ -52,8 +51,7 @@ EmployeeSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
   next();
 });
+module.exports = mongoose.model('Employee', EmployeeSchema);
 
 // Option pour créer un index unique pour `email` et améliorer les performances de recherche
 // EmployeeSchema.index({ email: 1 }, { unique: true });
-
-module.exports = mongoose.model('Employee', EmployeeSchema);
