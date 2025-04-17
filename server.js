@@ -33,7 +33,7 @@ const employeeRoutes = require('./routes/employeeRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 require('dotenv').config();
 
 const app = express();
@@ -42,6 +42,7 @@ const cors= require(`cors`)
 
 app.use(bodyParser.json());
 app.use(`cors`)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 connectDB;
 
