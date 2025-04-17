@@ -38,12 +38,11 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3001;
-const cors= require(`cors`)
+const cors= require("cors")
 
+app.use(express.json());
 app.use(bodyParser.json());
-app.use(`cors`)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
+app.use(cors());
 connectDB;
 
 app.use('/api/auth', authRoutes);
@@ -58,3 +57,4 @@ app.get(`/`,(request,response)=>{
     response.send(`Salut les amis, Bienvenu sur l'API de PaiePilot`);
 })
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

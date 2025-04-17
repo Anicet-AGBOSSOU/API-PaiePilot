@@ -63,6 +63,9 @@ const authenticateToken = (req, res, next) => {
   }
 };
 module.exports = authenticateToken;
+
+
+
 // // Middleware pour vérifier les rôles
 // exports.authorizeRole = (roles) => {
 //   return (req, res, next) => {

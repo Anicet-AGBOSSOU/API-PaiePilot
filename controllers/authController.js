@@ -1,10 +1,10 @@
+require(`dotenv`).config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Company = require('../models/companyModel');
 const JWT_SECRET=process.env.JWT_SECRET;
 console.log(JWT_SECRET)
 // const { JWT_SECRET } = require('../config/jwt');
-require(`dotenv`).config();
 
 const generateToken = (payload) => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
@@ -117,38 +117,6 @@ exports.loginCompany = async (req, res) => {
 };
 
 
-// exports.loginCompany = async (req, res) => {
-//   const { companyEmail, password } = req.body;
-
-//   if (!companyEmail || !password) {
-//     return res.status(400).json({ error: 'L\'email et le mot de passe sont requis.' });
-//   }
-
-//   try {
-//     const company = await Company.findOne({ companyEmail });
-
-//     if (!company) {
-//       return res.status(401).json({ error: 'Identifiants invalides.' });
-//     }
-
-//     const passwordMatch = await bcrypt.compare(password, company.passwordHash);
-//     if (passwordMatch) {
-//       const payload = { companyId: company._id, companyEmail: company.companyEmail };
-//       const token = generateToken(payload);
-
-
-//       // Ajouter l'entreprise à la liste des connectées
-//       connectedCompanies.push({ companyId: company._id, companyEmail: company.companyEmail });
-
-//       res.status(200).json({ token, companyId: company._id });
-//     } else {
-//       res.status(401).json({ error: 'Identifiants invalides.' });
-//     }
-//   } catch (error) {
-//     console.error('Erreur lors de la connexion :', error);
-//     res.status(500).json({ error: 'Erreur serveur lors de la connexion.' });
-//   }
-// };
 
 // Déconnexion d'une entreprise
 exports.logoutCompany = (req, res) => {
@@ -232,98 +200,3 @@ exports.deleteCompany = async (req, res) => {
 
 
 
-
-// const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
-// const Company = require('../models/companyModel');
-// const { JWT_SECRET } = require('../config/jwt');
-
-// const generateToken = (payload) => {
-//   return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-// };
-
-// exports.registerCompany = async (req, res) => {
-//   const {
-//     companyName,
-//     companyEmail,
-//     password,
-//     phoneNumber,
-//     address,
-//     registrationNumber,
-//     taxIdentificationNumber,
-//     legalForm,
-//     sectorOfActivity,
-//     website,
-//     contactPersonName,
-//     contactPersonEmail,
-//     contactPersonPhone,
-//   } = req.body;
-
-//   const requiredFields = [companyName, companyEmail, password];
-//   if (requiredFields.some(field => !field)) {
-//     return res.status(400).json({ error: 'Le nom de l\'entreprise, l\'email et le mot de passe sont requis.' });
-//   }
-
-//   try {
-//     const existingCompany = await Company.findOne({ companyEmail });
-//     if (existingCompany) {
-//       return res.status(409).json({ error: 'L\'adresse email de l\'entreprise existe déjà.' });
-//     }
-
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const newCompany = new Company({
-//       companyName,
-//       companyEmail,
-//       passwordHash: hashedPassword,
-//       phoneNumber,
-//       address,
-//       registrationNumber,
-//       taxIdentificationNumber,
-//       legalForm,
-//       sectorOfActivity,
-//       website,
-//       contactPersonName,
-//       contactPersonEmail,
-//       contactPersonPhone,
-//     });
-
-//     const savedCompany = await newCompany.save();
-
-//     res.status(201).json({ message: 'Entreprise enregistrée avec succès.', companyId: savedCompany._id });
-//   } catch (error) {
-//     console.error('Erreur lors de l\'inscription :', error);
-//     res.status(500).json({ error: 'Erreur serveur lors de l\'inscription.' });
-//   }
-// };
-
-// exports.loginCompany = async (req, res) => {
-//   const { companyEmail, password } = req.body;
-
-//   if (!companyEmail || !password) {
-//     return res.status(400).json({ error: 'L\'email et le mot de passe sont requis.' });
-//   }
-
-//   try {
-//     const company = await Company.findOne({ companyEmail });
-
-//     if (!company) {
-//       return res.status(401).json({ error: 'Identifiants invalides.' });
-//     }
-
-//     const passwordMatch = await bcrypt.compare(password, company.passwordHash);
-
-//     console.log(company)
-//     if (passwordMatch) {
-//       const payload = { companyId: company._id, companyEmail: company.companyEmail };
-//       const token = generateToken(payload);
-
-//       res.status(200).json({ token, companyId: company._id });
-//     } else {
-//       res.status(401).json({ error: 'Identifiants invalides.' });
-//     }
-//   } catch (error) {
-//     console.error('Erreur lors de la connexion :', error);
-//     res.status(500).json({ error: 'Erreur serveur lors de la connexion.' });
-//   }
-// };
