@@ -41,12 +41,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
+const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger'); // 
 require('dotenv').config();
-const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3001;
